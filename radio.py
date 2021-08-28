@@ -65,7 +65,7 @@ def get_page(articles, url, limit_date, proxy):
                                         text += str(content).encode('ISO-8859-1').decode("windows-1251")
                             except Exception:
                                 pass
-                        articles.append({"date": date, "title": title, "text": text})
+                        articles.append({"date": date, "title": title, "text": text, "href": RADIO_URL + url})
                         return False, articles, proxy
                     else:
                         return True, articles, proxy

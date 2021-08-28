@@ -31,7 +31,7 @@ def parsing_radio_url(page, limit_date, proxy, body):
         if len(tables) == 0:
             return False, body, False, proxy
         for table in tables:
-            article_date = parse_date(table.find("p", {"class": "news-preview__publish-time"}).text)
+            article_date = parse_date(table.find("p", {"class": "news-preview__publish-time"}, "%d %m %Y %H:%M").text)
             if article_date >= limit_date:
                 href = table.find("a", {"class": "news-preview__link"}).attrs.get("href")
                 body.append({"date": article_date, "href": href})
@@ -69,7 +69,9 @@ def get_page(articles, article_body, proxy):
                         pass
             except Exception:
                 pass
-            articles.append({"date": article_body['date'], "title": title, "text": text.replace(" ", " ").strip(), "photos":photos})
+            articles.append({"date": article_body['date'], "title": title, "text": text.replace(" ", " ").strip(),
+                             "href":RADIO_URL + article_body['href'],
+                             "photos":photos})
 
             return False, articles, proxy
         return False, articles, proxy
