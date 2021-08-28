@@ -31,7 +31,7 @@ def parsing_radio_url(page, limit_date, proxy, body):
         if len(tables) == 0:
             return False, body, False, proxy
         for table in tables:
-            article_date = parse_date(table.find("p", {"class": "news-preview__publish-time"}, "%d %m %Y %H:%M").text)
+            article_date = parse_date(table.find("p", {"class": "news-preview__publish-time"}).text, "%d %m %Y %H:%M")
             if article_date >= limit_date:
                 href = table.find("a", {"class": "news-preview__link"}).attrs.get("href")
                 body.append({"date": article_date, "href": href})
@@ -46,6 +46,8 @@ def get_page(articles, article_body, proxy):
     title = ""
     text = ""
     photos = []
+    sounds = []
+    videos = []
     try:
         res = requests.get(RADIO_URL + article_body['href'], headers={
             "user-agent": USER_AGENT
@@ -70,8 +72,11 @@ def get_page(articles, article_body, proxy):
             except Exception:
                 pass
             articles.append({"date": article_body['date'], "title": title, "text": text.replace(" ", " ").strip(),
-                             "href":RADIO_URL + article_body['href'],
-                             "photos":photos})
+                             "href": RADIO_URL + article_body['href'],
+                             "photos": photos,
+                             "sounds": sounds,
+                             "videos": videos
+                             })
 
             return False, articles, proxy
         return False, articles, proxy
@@ -97,6 +102,7 @@ def parsing_radio(limit_date, proxy):
             pass
 
     return articles, proxy
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

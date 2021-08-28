@@ -46,6 +46,9 @@ def get_page(articles, url, limit_date, proxy):
     title = ""
     text = ""
     date = None
+    photos = []
+    videos = []
+    sounds = []
     try:
         res = requests.get(RADIO_URL + url, headers={
             "user-agent": USER_AGENT
@@ -65,7 +68,11 @@ def get_page(articles, url, limit_date, proxy):
                                         text += str(content).encode('ISO-8859-1').decode("windows-1251")
                             except Exception:
                                 pass
-                        articles.append({"date": date, "title": title, "text": text, "href": RADIO_URL + url})
+                        articles.append({"date": date, "title": title, "text": text, "href": RADIO_URL + url,
+                                         "photos": photos,
+                                         "sounds": sounds,
+                                         "videos": videos
+                                         })
                         return False, articles, proxy
                     else:
                         return True, articles, proxy

@@ -34,7 +34,7 @@ def parsing_radio_url(page, limit_date, proxy, body):
             try:
                 article_date = parse_date(table.find("span", {"class": re.compile("^date date")}).text, "%d %m %Y")
                 if article_date >= limit_date:
-                    href = table.find("a", {"href":re.compile("^/a/")}).attrs["href"]
+                    href = table.find("a", {"href": re.compile("^/a/")}).attrs["href"]
                     body.append({"date": article_date, "href": href})
                 else:
                     return False, body, True, proxy
@@ -49,6 +49,8 @@ def get_page(articles, article_body, limit_date, proxy):
     text = ""
     videos = []
     photos = []
+    sounds = []
+
     try:
         res = requests.get(RADIO_URL + article_body['href'], headers={
             "user-agent": USER_AGENT
@@ -59,7 +61,7 @@ def get_page(articles, article_body, limit_date, proxy):
             body_texts = soup.find("div", {"class": "body-container"}).find_all("p")
             for body_text in body_texts:
                 text += body_text.text
-            text = text.strip()
+            text = text
             for cover_media in soup.find("div", {"class": "cover-media"}):
                 try:
                     photos.append(cover_media.find("img").attrs['src'])
@@ -72,7 +74,9 @@ def get_page(articles, article_body, limit_date, proxy):
                     pass
             articles.append({"date": article_body["date"], "title": title, "text": text, "videos": videos,
                              "href": RADIO_URL + article_body['href'],
-                             "photos":photos})
+                             "photos": photos,
+                             "sounds": sounds
+                             })
             return False, articles, proxy
         return True, articles, proxy
     except Exception:
@@ -108,6 +112,7 @@ def parsing_radio(limit_date, proxy):
         except Exception:
             pass
     return articles, proxy
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
